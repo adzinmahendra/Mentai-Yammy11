@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Mentai Yammy – Dimsum, Mentai & Wonton terbaik di Kota Solo" />
+  <title>Mentai Yammy 🍱</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ============================================================
+       BASE — Variables · Reset · Animations
+       ============================================================ */
+    :root {
+      --cream:        #FFF8F0;
+      --warm:         #FFF0E0;
+      --orange:       #FF6B35;
+      --orange-dark:  #E85520;
+      --brown:        #4A2C17;
+      --brown-light:  #7A4A2A;
+      --gold:         #F4B942;
+      --gray:         #8A8A8A;
+      --shadow:       0 8px 32px rgba(74,44,23,.12);
+      --shadow-card:  0 4px 20px rgba(74,44,23,.10);
+      --transition:   0.22s ease;
+    }
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { -webkit-text-size-adjust:100%; }
+    body { font-family:'DM Sans',sans-serif; background:var(--cream); color:var(--brown); min-height:100vh; overflow-x:hidden; }
+    button { font-family:inherit; cursor:pointer; }
+    a      { text-decoration:none; cursor:pointer; }
+    input  { font-family:inherit; }
+
+    @keyframes splashIn { from{opacity:0;transform:scale(.8)} to{opacity:1;transform:scale(1)} }
+    @keyframes bounce   { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+    @keyframes pulse    { 0%,100%{background:rgba(255,255,255,.4)} 50%{background:#fff} }
+    @keyframes slideUp  { from{transform:translateY(100%)} to{transform:translateY(0)} }
+    @keyframes popIn    { from{transform:scale(0)} 70%{transform:scale(1.2)} to{transform:scale(1)} }
+
+    /* ============================================================
+       COMPONENTS — Shared UI Elements
+       ============================================================ */
+
+    /* Screen wrapper */
+    .screen { display:none; min-height:100vh; flex-direction:column; }
+    .screen.active { display:flex; }
+
+    /* Navbar */
+    .navbar { position:sticky; top:0; z-index:100; background:#fff; display:flex; align-items:center; justify-content:space-between; padding:16px 20px; box-shadow:0 2px 16px rgba(74,44,23,.08); }
+    .nav-brand   { display:flex; align-items:center; gap:10px; }
+    .nav-logo    { font-size:28px; }
+    .nav-title   { font-family:'Playfair Display',serif; font-size:20px; font-weight:900; color:var(--orange); }
+    .nav-actions { display:flex; gap:12px; align-items:center; }
+    .nav-btn     { padding:8px 18px; border-radius:20px; border:none; font-size:13px; font-weight:600; transition:all var(--transition); }
+    .nav-btn-outline         { background:transparent; border:2px solid var(--orange); color:var(--orange); }
+    .nav-btn-outline:hover   { background:var(--orange); color:#fff; }
+    .nav-btn-fill            { background:var(--orange); color:#fff; }
+    .nav-btn-fill:hover      { background:var(--orange-dark); }
+    .nav-icon-btn            { width:36px; height:36px; border-radius:50%; border:none; background:var(--cream); font-size:18px; display:flex; align-items:center; justify-content:center; transition:background var(--transition); }
+    .nav-icon-btn:hover      { background:var(--warm); }
+
+    /* Bottom nav */
+    .bottom-nav { position:fixed; bottom:0; left:0; right:0; z-index:100; background:#fff; display:flex; border-top:1px solid #F0E8E0; padding-bottom:env(safe-area-inset-bottom,0); }
+    .bottom-nav-item { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:10px 0; border:none; background:none; transition:all var(--transition); position:relative; }
+    .bottom-nav-item .icon  { font-size:22px; }
+    .bottom-nav-item .label { font-size:10px; font-weight:600; margin-top:4px; color:var(--gray); }
+    .bottom-nav-item.active .label { color:var(--orange); }
+    .bottom-nav-item.active::after { content:''; position:absolute; top:0; left:50%; transform:translateX(-50%); width:32px; height:3px; background:var(--orange); border-radius:0 0 4px 4px; }
+
+    /* Buttons */
+    .btn-primary        { width:100%; padding:15px; border-radius:14px; background:linear-gradient(135deg,var(--orange),var(--orange-dark)); color:#fff; border:none; font-weight:700; font-size:15px; transition:all var(--transition); box-shadow:0 4px 16px rgba(255,107,53,.4); }
+    .btn-primary:hover  { transform:translateY(-2px); box-shadow:0 8px 24px rgba(255,107,53,.5); }
+    .btn-primary:active { transform:scale(.98); }
+    .btn-google  { background:linear-gradient(135deg,#4285F4,#1557B0); box-shadow:0 4px 16px rgba(66,133,244,.3); }
+    .btn-gold    { background:linear-gradient(135deg,var(--gold),#E09520); }
+    .btn-add-cart { width:100%; padding:16px; border-radius:16px; background:linear-gradient(135deg,var(--orange),var(--orange-dark)); color:#fff; border:none; font-weight:700; font-size:16px; transition:all var(--transition); box-shadow:0 4px 20px rgba(255,107,53,.4); display:flex; align-items:center; justify-content:center; gap:10px; }
+    .btn-add-cart:hover  { transform:translateY(-2px); }
+    .btn-add-cart:active { transform:scale(.98); }
+    .btn-logout  { width:100%; padding:15px; border-radius:14px; border:2px solid #FFE0E0; background:#FFF5F5; color:#E53935; font-weight:700; font-size:15px; transition:all var(--transition); }
+    .btn-logout:hover { background:#FFE0E0; }
+
+    /* Forms */
+    .form-group { margin-bottom:16px; }
+    .form-label { display:block; font-size:12px; font-weight:700; color:var(--brown-light); letter-spacing:.5px; margin-bottom:6px; text-transform:uppercase; }
+    .form-input { width:100%; padding:13px 16px; border-radius:12px; border:2px solid #F0E8E0; font-size:14px; outline:none; transition:border var(--transition); color:var(--brown); background:#fff; }
+    .form-input:focus { border-color:var(--orange); }
+
+    /* Divider */
+    .divider { display:flex; align-items:center; gap:12px; margin:20px 0; }
+    .divider::before,.divider::after { content:''; flex:1; height:1px; background:#F0E8E0; }
+    .divider span { color:var(--gray); font-size:12px; }
+
+    /* Section header */
+    .section-header { display:flex; align-items:center; justify-content:space-between; padding:0 20px; margin:20px 0 12px; }
+    .section-title  { font-family:'Playfair Display',serif; font-size:20px; font-weight:700; }
+    .see-all        { color:var(--orange); font-size:13px; font-weight:600; border:none; background:none; }
+
+    /* Category tabs */
+    .categories { display:flex; gap:10px; padding:0 20px; overflow-x:auto; margin-bottom:16px; scrollbar-width:none; }
+    .categories::-webkit-scrollbar { display:none; }
+    .cat-tab        { flex-shrink:0; padding:8px 18px; border-radius:20px; border:2px solid #F0E8E0; background:#fff; font-size:13px; font-weight:600; cursor:pointer; transition:all var(--transition); color:var(--brown-light); }
+    .cat-tab.active { background:var(--orange); border-color:var(--orange); color:#fff; }
+
+    /* Menu grid & cards */
+    .menu-grid      { display:grid; grid-template-columns:1fr 1fr; gap:14px; padding:0 20px; }
+    .menu-card      { background:#fff; border-radius:16px; overflow:hidden; box-shadow:var(--shadow-card); cursor:pointer; position:relative; transition:transform var(--transition),box-shadow var(--transition); }
+    .menu-card:hover  { transform:translateY(-4px); box-shadow:var(--shadow); }
+    .menu-card:active { transform:scale(.97); }
+    .menu-emoji-img { width:100%; aspect-ratio:1; display:flex; align-items:center; justify-content:center; font-size:72px; background:linear-gradient(135deg,#FFF5EC,#FFE5CC); }
+    .menu-info  { padding:12px; }
+    .menu-name  { font-weight:700; font-size:14px; line-height:1.3; }
+    .menu-desc  { font-size:11px; color:var(--gray); margin-top:4px; line-height:1.4; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+    .menu-price { font-weight:700; font-size:15px; color:var(--orange); margin-top:8px; }
+    .badge-popular,.badge-new { position:absolute; top:10px; left:10px; font-size:10px; font-weight:700; padding:4px 8px; border-radius:8px; text-transform:uppercase; letter-spacing:.5px; }
+    .badge-popular { background:var(--orange); color:#fff; }
+    .badge-new     { background:var(--gold);   color:var(--brown); }
+
+    /* Info grid */
+    .info-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:24px; }
+    .info-item { background:#fff; border-radius:12px; padding:14px; text-align:center; box-shadow:var(--shadow-card); }
+    .info-item .info-icon { font-size:24px; margin-bottom:6px; }
+    .info-item .info-val  { font-weight:700; font-size:15px; color:var(--brown); }
+    .info-item .info-lbl  { font-size:11px; color:var(--gray); margin-top:2px; }
+
+    /* Qty control */
+    .qty-control { display:flex; align-items:center; gap:16px; background:#fff; border-radius:14px; padding:12px 16px; box-shadow:var(--shadow-card); width:fit-content; margin-bottom:24px; }
+    .qty-btn     { width:36px; height:36px; border-radius:10px; border:2px solid var(--orange); background:transparent; color:var(--orange); font-size:20px; font-weight:700; display:flex; align-items:center; justify-content:center; transition:all var(--transition); }
+    .qty-btn:hover { background:var(--orange); color:#fff; }
+    .qty-val     { font-size:20px; font-weight:700; min-width:30px; text-align:center; }
+
+    /* E-wallet options */
+    .ewallet-options { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:24px; }
+    .ewallet-btn     { border:2px solid #F0E8E0; border-radius:16px; padding:16px 12px; cursor:pointer; transition:all var(--transition); text-align:center; background:#fff; }
+    .ewallet-btn:hover, .ewallet-btn.selected { border-color:var(--orange); background:var(--warm); }
+    .ew-icon   { font-size:32px; margin-bottom:6px; }
+    .ew-name   { font-size:13px; font-weight:700; color:var(--brown); }
+    .ew-color  { font-size:11px; font-weight:600; margin-top:2px; }
+    .ew-gopay  { color:#00AED6; }
+    .ew-ovo    { color:#4C3494; }
+    .ew-dana   { color:#118EEA; }
+    .ew-shopee { color:#EE4D2D; }
+
+    /* QR section */
+    .qr-section { text-align:center; margin:20px 0; }
+    .qr-box     { width:200px; height:200px; margin:0 auto 16px; border:3px solid var(--orange); border-radius:20px; display:flex; align-items:center; justify-content:center; font-size:120px; background:var(--warm); position:relative; overflow:hidden; }
+    .qr-box::before { content:''; position:absolute; inset:0; background:repeating-linear-gradient(0deg,transparent,transparent 9px,rgba(255,107,53,.08) 9px,rgba(255,107,53,.08) 10px),repeating-linear-gradient(90deg,transparent,transparent 9px,rgba(255,107,53,.08) 9px,rgba(255,107,53,.08) 10px); }
+    .qr-instruction { font-size:13px; color:var(--gray); }
+    .qr-amount  { font-size:24px; font-weight:700; color:var(--orange); margin-top:8px; }
+    .qr-timer   { font-size:12px; color:var(--gray); margin-top:4px; }
+    .btn-pay-confirm { width:100%; padding:16px; border-radius:16px; background:linear-gradient(135deg,#4CAF50,#388E3C); color:#fff; border:none; font-weight:700; font-size:16px; transition:all var(--transition); margin-top:16px; }
+    .btn-pay-confirm:hover { transform:translateY(-2px); }
+
+    /* Modal */
+    .modal-overlay { display:none; position:fixed; inset:0; z-index:200; background:rgba(0,0,0,.5); align-items:flex-end; justify-content:center; backdrop-filter:blur(4px); }
+    .modal-overlay.active { display:flex; }
+    .modal-sheet   { background:#fff; width:100%; max-width:480px; border-radius:24px 24px 0 0; padding:28px 24px 40px; animation:slideUp .3s ease; max-height:90vh; overflow-y:auto; }
+    .modal-handle  { width:40px; height:4px; background:#F0E8E0; border-radius:2px; margin:0 auto 24px; }
+    .modal-title   { font-family:'Playfair Display',serif; font-size:22px; font-weight:700; margin-bottom:20px; }
+    .modal-cancel  { text-align:center; margin-top:16px; }
+    .modal-cancel button { background:none; border:none; color:var(--gray); font-size:14px; }
+
+    /* Toast */
+    .toast { position:fixed; bottom:80px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--brown); color:#fff; padding:12px 24px; border-radius:12px; font-size:14px; font-weight:600; z-index:500; opacity:0; transition:all .3s; pointer-events:none; white-space:nowrap; }
+    .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+    /* ============================================================
+       SCREENS — Per-Screen Styles
+       ============================================================ */
+
+    /* Splash */
+    #splash { background:linear-gradient(145deg,#FF6B35 0%,#E85520 50%,#C73D10 100%); align-items:center; justify-content:center; position:relative; overflow:hidden; }
+    #splash::before { content:''; position:absolute; width:600px; height:600px; border-radius:50%; background:rgba(255,255,255,.05); top:-200px; right:-200px; }
+    #splash::after  { content:''; position:absolute; width:400px; height:400px; border-radius:50%; background:rgba(255,255,255,.05); bottom:-150px; left:-100px; }
+    .splash-content { text-align:center; z-index:1; animation:splashIn .8s ease; }
+    .splash-logo    { font-size:80px; margin-bottom:16px; animation:bounce 2s infinite; }
+    .splash-title   { font-family:'Playfair Display',serif; color:#fff; font-size:42px; font-weight:900; line-height:1.1; }
+    .splash-sub     { color:rgba(255,255,255,.8); font-size:16px; margin-top:8px; letter-spacing:2px; text-transform:uppercase; }
+    .splash-dots    { display:flex; gap:8px; justify-content:center; margin-top:48px; }
+    .dot { width:10px; height:10px; border-radius:50%; background:rgba(255,255,255,.4); animation:pulse 1.4s infinite; }
+    .dot:nth-child(2) { animation-delay:.2s; }
+    .dot:nth-child(3) { animation-delay:.4s; }
+
+    /* Home */
+    #home { padding-bottom:70px; }
+    .hero { background:linear-gradient(135deg,#FF6B35 0%,#E85520 100%); padding:32px 20px 48px; position:relative; overflow:hidden; }
+    .hero::after { content:''; position:absolute; bottom:-1px; left:0; right:0; height:30px; background:var(--cream); border-radius:30px 30px 0 0; }
+    .hero-greeting { color:rgba(255,255,255,.8); font-size:14px; margin-bottom:4px; }
+    .hero-title    { font-family:'Playfair Display',serif; color:#fff; font-size:28px; font-weight:900; margin-bottom:16px; }
+    .hero-search   { display:flex; align-items:center; gap:10px; background:#fff; border-radius:14px; padding:12px 16px; box-shadow:0 4px 20px rgba(0,0,0,.15); }
+    .hero-search input { border:none; outline:none; font-size:14px; flex:1; background:transparent; color:var(--brown); }
+    .hero-search input::placeholder { color:var(--gray); }
+    .promo-banner  { margin:20px; border-radius:16px; background:linear-gradient(135deg,var(--gold),#F09B2E); padding:16px 20px; display:flex; align-items:center; justify-content:space-between; box-shadow:var(--shadow-card); }
+    .promo-text h3 { font-family:'Playfair Display',serif; font-size:18px; color:var(--brown); }
+    .promo-text p  { font-size:12px; color:var(--brown-light); margin-top:4px; }
+    .promo-emoji   { font-size:48px; }
+
+    /* Auth */
+    .auth-screen  { background:linear-gradient(160deg,#FF6B35 0%,#C73D10 100%); flex-direction:column; align-items:center; justify-content:flex-start; padding:40px 24px 30px; }
+    .auth-logo    { font-size:60px; margin-bottom:8px; }
+    .auth-brand   { font-family:'Playfair Display',serif; color:#fff; font-size:32px; font-weight:900; margin-bottom:4px; }
+    .auth-tagline { color:rgba(255,255,255,.8); font-size:14px; margin-bottom:32px; }
+    .auth-card    { background:#fff; border-radius:24px; padding:28px 24px; width:100%; max-width:400px; box-shadow:0 20px 60px rgba(0,0,0,.2); }
+    .auth-card h2 { font-family:'Playfair Display',serif; font-size:24px; margin-bottom:6px; color:var(--brown); }
+    .auth-card p  { color:var(--gray); font-size:13px; margin-bottom:24px; }
+    .auth-switch  { text-align:center; margin-top:20px; font-size:13px; color:var(--gray); }
+    .auth-switch a { color:var(--orange); font-weight:700; }
+
+    /* Detail */
+    #detail { background:var(--cream); padding-bottom:100px; }
+    .detail-img   { width:100%; height:280px; display:flex; align-items:center; justify-content:center; font-size:120px; background:linear-gradient(135deg,#FFF5EC,#FFE0C0); position:relative; }
+    .back-btn     { position:absolute; top:16px; left:16px; width:40px; height:40px; border-radius:50%; border:none; background:#fff; font-size:20px; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 12px rgba(0,0,0,.15); transition:all var(--transition); }
+    .back-btn:hover { background:var(--warm); }
+    .detail-content { padding:24px 20px; }
+    .detail-badges  { display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap; }
+    .detail-badge   { padding:4px 12px; border-radius:10px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; }
+    .badge-cat { background:var(--warm); color:var(--orange); }
+    .badge-hot { background:#FFF0F0; color:#E53935; }
+    .detail-name          { font-family:'Playfair Display',serif; font-size:28px; font-weight:900; margin-bottom:10px; }
+    .detail-price         { font-size:32px; font-weight:700; color:var(--orange); margin-bottom:16px; }
+    .detail-desc          { color:var(--brown-light); font-size:14px; line-height:1.8; margin-bottom:24px; }
+    .detail-section-title { font-weight:700; font-size:16px; margin-bottom:12px; }
+
+    /* Cart */
+    #cart { padding-bottom:80px; }
+    .cart-empty          { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:60px 40px; text-align:center; }
+    .cart-empty .empty-icon { font-size:80px; margin-bottom:16px; }
+    .cart-empty h3       { font-family:'Playfair Display',serif; font-size:22px; margin-bottom:8px; }
+    .cart-empty p        { color:var(--gray); font-size:14px; }
+    .cart-items          { padding:16px 20px; flex:1; }
+    .cart-item           { display:flex; align-items:center; gap:14px; background:#fff; border-radius:16px; padding:14px; margin-bottom:12px; box-shadow:var(--shadow-card); }
+    .cart-item-img       { font-size:44px; width:56px; height:56px; display:flex; align-items:center; justify-content:center; background:var(--warm); border-radius:12px; flex-shrink:0; }
+    .cart-item-info      { flex:1; }
+    .cart-item-name      { font-weight:700; font-size:14px; }
+    .cart-item-price     { color:var(--orange); font-weight:700; font-size:14px; margin-top:4px; }
+    .cart-item-qty       { display:flex; align-items:center; gap:10px; margin-top:8px; }
+    .cq-btn              { width:28px; height:28px; border-radius:8px; border:1.5px solid var(--orange); background:transparent; color:var(--orange); font-size:16px; font-weight:700; display:flex; align-items:center; justify-content:center; transition:all var(--transition); }
+    .cq-btn:hover        { background:var(--orange); color:#fff; }
+    .cart-summary        { background:#fff; margin:0 20px 16px; border-radius:16px; padding:20px; box-shadow:var(--shadow-card); }
+    .summary-row         { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; font-size:14px; }
+    .summary-row:last-child { margin-bottom:0; padding-top:12px; border-top:2px dashed #F0E8E0; font-size:18px; font-weight:700; }
+    .summary-row span:first-child { color:var(--gray); }
+    .btn-checkout        { margin:0 20px; width:calc(100% - 40px); padding:16px; border-radius:16px; background:linear-gradient(135deg,var(--orange),var(--orange-dark)); color:#fff; border:none; font-weight:700; font-size:16px; transition:all var(--transition); box-shadow:0 4px 20px rgba(255,107,53,.4); }
+    .btn-checkout:hover  { transform:translateY(-2px); }
+
+    /* Profile */
+    #profile { padding-bottom:80px; }
+    .profile-header { background:linear-gradient(135deg,var(--orange),var(--orange-dark)); padding:32px 20px 48px; position:relative; overflow:hidden; }
+    .profile-header::after { content:''; position:absolute; bottom:-1px; left:0; right:0; height:30px; background:var(--cream); border-radius:30px 30px 0 0; }
+    .profile-avatar-wrap { display:flex; align-items:center; gap:16px; }
+    .profile-avatar  { width:72px; height:72px; border-radius:50%; border:3px solid rgba(255,255,255,.5); background:rgba(255,255,255,.2); display:flex; align-items:center; justify-content:center; font-size:32px; }
+    .profile-name    { font-family:'Playfair Display',serif; font-size:22px; font-weight:900; color:#fff; }
+    .profile-email   { color:rgba(255,255,255,.8); font-size:13px; margin-top:4px; }
+    .profile-content { padding:20px; }
+    .profile-stats   { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-bottom:24px; }
+    .stat-card       { background:#fff; border-radius:14px; padding:16px; text-align:center; box-shadow:var(--shadow-card); }
+    .stat-num        { font-size:22px; font-weight:700; color:var(--orange); }
+    .stat-lbl        { font-size:11px; color:var(--gray); margin-top:4px; }
+    .profile-section       { margin-bottom:20px; }
+    .profile-section-title { font-size:12px; font-weight:700; color:var(--gray); letter-spacing:1px; text-transform:uppercase; margin-bottom:12px; }
+    .profile-item    { display:flex; align-items:center; gap:14px; background:#fff; border-radius:14px; padding:16px; margin-bottom:10px; box-shadow:var(--shadow-card); cursor:pointer; transition:all var(--transition); }
+    .profile-item:hover { transform:translateX(4px); }
+    .profile-item-icon  { font-size:22px; width:42px; height:42px; border-radius:12px; display:flex; align-items:center; justify-content:center; }
+    .pi-orange { background:var(--warm);  }
+    .pi-green  { background:#F0FFF4; }
+    .pi-blue   { background:#EEF5FF; }
+    .profile-item-info  { flex:1; }
+    .profile-item-name  { font-weight:600; font-size:14px; }
+    .profile-item-sub   { font-size:12px; color:var(--gray); margin-top:2px; }
+    .profile-item-arrow { color:var(--gray); font-size:18px; }
+
+    /* Success */
+    .success-screen { display:flex; flex-direction:column; align-items:center; padding:20px; }
+    .success-icon   { font-size:100px; margin-bottom:24px; animation:popIn .5s ease; }
+    .success-title  { font-family:'Playfair Display',serif; font-size:28px; font-weight:900; margin-bottom:12px; text-align:center; }
+    .success-sub    { color:var(--gray); font-size:14px; text-align:center; line-height:1.6; margin-bottom:32px; }
+    .order-id       { background:var(--warm); border-radius:12px; padding:16px 24px; text-align:center; margin-bottom:24px; width:100%; }
+    .order-label    { font-size:12px; color:var(--gray); margin-bottom:4px; }
+    .order-value    { font-size:18px; font-weight:700; color:var(--orange); letter-spacing:2px; }
+
+    @media (max-width:400px) {
+      .menu-grid      { gap:10px; }
+      .menu-emoji-img { font-size:52px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==================== SPLASH ==================== -->
+  <div class="screen active" id="splash">
+    <div class="splash-content">
+      <div class="splash-logo">🍱</div>
+      <div class="splash-title">Mentai<br/>Yammy</div>
+      <div class="splash-sub">Dimsum · Mentai · Wonton</div>
+      <div class="splash-dots">
+        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== HOME ==================== -->
+  <div class="screen" id="home">
+    <nav class="navbar">
+      <div class="nav-brand">
+        <span class="nav-logo">🍱</span>
+        <span class="nav-title">Mentai Yammy</span>
+      </div>
+      <div class="nav-actions" id="nav-auth-btns">
+        <button class="nav-btn nav-btn-outline" onclick="showScreen('login')">Masuk</button>
+        <button class="nav-btn nav-btn-fill"    onclick="showScreen('register')">Daftar</button>
+      </div>
+      <div class="nav-actions" id="nav-user-btns" style="display:none">
+        <button class="nav-icon-btn" onclick="showScreen('cart')">🛒</button>
+      </div>
+    </nav>
+    <section class="hero">
+      <div class="hero-greeting">Halo, Selamat Datang! 👋</div>
+      <div class="hero-title">Dimsum Mentai<br/>Terbaik Kota Solo</div>
+      <div class="hero-search">
+        <span>🔍</span>
+        <input type="text" id="search-input" placeholder="Cari dimsum, wonton, mentai..." oninput="filterMenu()"/>
+      </div>
+    </section>
+    <div class="promo-banner">
+      <div class="promo-text"><h3>Promo Hari Ini!</h3><p>Gratis ongkir min. order Rp 50.000</p></div>
+      <div class="promo-emoji">🎉</div>
+    </div>
+    <div class="section-header"><div class="section-title">Kategori Menu</div></div>
+    <div class="categories">
+      <button class="cat-tab active"  onclick="filterCat('semua',   this)">Semua</button>
+      <button class="cat-tab"         onclick="filterCat('dimsum',  this)">🥟 Dimsum</button>
+      <button class="cat-tab"         onclick="filterCat('mentai',  this)">🧀 Mentai</button>
+      <button class="cat-tab"         onclick="filterCat('wonton',  this)">🍜 Wonton</button>
+      <button class="cat-tab"         onclick="filterCat('minuman', this)">🧋 Minuman</button>
+    </div>
+    <div class="section-header">
+      <div class="section-title">Menu Populer</div>
+      <button class="see-all">Lihat Semua</button>
+    </div>
+    <div class="menu-grid" id="menu-grid"></div>
+    <div style="height:20px"></div>
+    <nav class="bottom-nav">
+      <button class="bottom-nav-item active" onclick="switchTab('home',    this)"><span class="icon">🏠</span><span class="label">Beranda</span></button>
+      <button class="bottom-nav-item"        onclick="switchTab('cart',    this)"><span class="icon">🛒</span><span class="label">Keranjang</span></button>
+      <button class="bottom-nav-item"        onclick="switchTab('profile', this)"><span class="icon">👤</span><span class="label">Profil</span></button>
+    </nav>
+  </div>
+
+  <!-- ==================== LOGIN ==================== -->
+  <div class="screen auth-screen" id="login">
+    <div class="auth-logo">🍱</div>
+    <div class="auth-brand">Mentai Yammy</div>
+    <div class="auth-tagline">Masuk dan nikmati kelezatan dimsum terbaik</div>
+    <div class="auth-card">
+      <h2>Selamat Datang!</h2>
+      <p>Masuk ke akunmu untuk memesan</p>
+      <div class="form-group"><label class="form-label">Email</label><input class="form-input" type="email" id="login-email" placeholder="nama@email.com"/></div>
+      <div class="form-group"><label class="form-label">Password</label><input class="form-input" type="password" id="login-pass" placeholder="••••••••"/></div>
+      <button class="btn-primary" onclick="doLogin()">Masuk Sekarang</button>
+      <div class="divider"><span>atau</span></div>
+      <button class="btn-primary btn-google" onclick="doLogin()">🔵 Masuk dengan Google</button>
+      <div class="auth-switch">Belum punya akun? <a onclick="showScreen('register')">Daftar disini</a></div>
+      <div class="auth-switch" style="margin-top:10px"><a onclick="showScreen('home')">← Kembali ke Beranda</a></div>
+    </div>
+  </div>
+
+  <!-- ==================== REGISTER ==================== -->
+  <div class="screen auth-screen" id="register">
+    <div class="auth-logo">🍱</div>
+    <div class="auth-brand">Mentai Yammy</div>
+    <div class="auth-tagline">Bergabung dan dapatkan promo spesial!</div>
+    <div class="auth-card">
+      <h2>Buat Akun Baru</h2>
+      <p>Daftar gratis dan mulai memesan</p>
+      <div class="form-group"><label class="form-label">Nama Lengkap</label><input class="form-input" type="text"     id="reg-name"  placeholder="Nama kamu"/></div>
+      <div class="form-group"><label class="form-label">Nomor HP</label>    <input class="form-input" type="tel"      id="reg-phone" placeholder="08xxxxxxxxxx"/></div>
+      <div class="form-group"><label class="form-label">Email</label>        <input class="form-input" type="email"    id="reg-email" placeholder="nama@email.com"/></div>
+      <div class="form-group"><label class="form-label">Password</label>     <input class="form-input" type="password" id="reg-pass"  placeholder="Min. 8 karakter"/></div>
+      <button class="btn-primary" onclick="doRegister()">Daftar Sekarang</button>
+      <div class="auth-switch">Sudah punya akun? <a onclick="showScreen('login')">Masuk disini</a></div>
+      <div class="auth-switch" style="margin-top:10px"><a onclick="showScreen('home')">← Kembali ke Beranda</a></div>
+    </div>
+  </div>
+
+  <!-- ==================== DETAIL ==================== -->
+  <div class="screen" id="detail">
+    <div class="detail-img">
+      <button class="back-btn" onclick="showScreen('home')">←</button>
+      <span id="detail-emoji"></span>
+    </div>
+    <div class="detail-content">
+      <div class="detail-badges">
+        <span class="detail-badge badge-cat" id="detail-cat"></span>
+        <span class="detail-badge badge-hot" id="detail-hot" style="display:none">🔥 Terlaris</span>
+      </div>
+      <div class="detail-name"  id="detail-name"></div>
+      <div class="detail-price" id="detail-price"></div>
+      <div class="detail-desc"  id="detail-desc"></div>
+      <div class="detail-section-title">Info Produk</div>
+      <div class="info-grid">
+        <div class="info-item"><div class="info-icon">⏱️</div><div class="info-val">15 mnt</div><div class="info-lbl">Estimasi</div></div>
+        <div class="info-item"><div class="info-icon">⭐</div><div class="info-val" id="detail-rating"></div><div class="info-lbl">Rating</div></div>
+        <div class="info-item"><div class="info-icon">🔥</div><div class="info-val" id="detail-cal"></div><div class="info-lbl">Kalori</div></div>
+        <div class="info-item"><div class="info-icon">📦</div><div class="info-val" id="detail-portion"></div><div class="info-lbl">Porsi</div></div>
+      </div>
+      <div class="detail-section-title">Jumlah</div>
+      <div class="qty-control">
+        <button class="qty-btn" onclick="changeQty(-1)">−</button>
+        <span class="qty-val" id="qty-display">1</span>
+        <button class="qty-btn" onclick="changeQty(1)">+</button>
+      </div>
+      <button class="btn-add-cart" onclick="addToCart()">🛒 Tambah ke Keranjang — <span id="detail-total"></span></button>
+    </div>
+  </div>
+
+  <!-- ==================== CART ==================== -->
+  <div class="screen" id="cart">
+    <div class="navbar">
+      <div class="nav-brand">
+        <span style="font-size:20px;cursor:pointer" onclick="showScreen('home')">←</span>
+        <span class="nav-title">Keranjang</span>
+      </div>
+    </div>
+    <div id="cart-body"></div>
+    <nav class="bottom-nav">
+      <button class="bottom-nav-item"        onclick="switchTab('home',    this)"><span class="icon">🏠</span><span class="label">Beranda</span></button>
+      <button class="bottom-nav-item active" onclick="switchTab('cart',    this)"><span class="icon">🛒</span><span class="label">Keranjang</span></button>
+      <button class="bottom-nav-item"        onclick="switchTab('profile', this)"><span class="icon">👤</span><span class="label">Profil</span></button>
+    </nav>
+  </div>
+
+  <!-- ==================== PROFILE ==================== -->
+  <div class="screen" id="profile">
+    <div class="profile-header">
+      <div class="profile-avatar-wrap">
+        <div class="profile-avatar" id="prof-avatar">👤</div>
+        <div>
+          <div class="profile-name"  id="prof-name">Tamu</div>
+          <div class="profile-email" id="prof-email">Belum login</div>
+        </div>
+      </div>
+    </div>
+    <div class="profile-content">
+      <div class="profile-stats">
+        <div class="stat-card"><div class="stat-num" id="prof-orders">0</div><div class="stat-lbl">Pesanan</div></div>
+        <div class="stat-card"><div class="stat-num">⭐4.9</div><div class="stat-lbl">Rating</div></div>
+        <div class="stat-card"><div class="stat-num">🏅</div><div class="stat-lbl">Member</div></div>
+      </div>
+      <div class="profile-section">
+        <div class="profile-section-title">Akun</div>
+        <div class="profile-item"><div class="profile-item-icon pi-orange">👤</div><div class="profile-item-info"><div class="profile-item-name">Edit Profil</div><div class="profile-item-sub">Ubah nama, foto, nomor HP</div></div><div class="profile-item-arrow">›</div></div>
+        <div class="profile-item"><div class="profile-item-icon pi-blue">📍</div><div class="profile-item-info"><div class="profile-item-name">Alamat Saya</div><div class="profile-item-sub">Kelola alamat pengiriman</div></div><div class="profile-item-arrow">›</div></div>
+      </div>
+      <div class="profile-section">
+        <div class="profile-section-title">Pesanan</div>
+        <div class="profile-item" onclick="checkLogin()"><div class="profile-item-icon pi-orange">📋</div><div class="profile-item-info"><div class="profile-item-name">Riwayat Pesanan</div><div class="profile-item-sub">Lihat semua pesananmu</div></div><div class="profile-item-arrow">›</div></div>
+        <div class="profile-item"><div class="profile-item-icon pi-green">💳</div><div class="profile-item-info"><div class="profile-item-name">Metode Pembayaran</div><div class="profile-item-sub">GoPay, OVO, DANA, dll</div></div><div class="profile-item-arrow">›</div></div>
+      </div>
+      <div class="profile-section">
+        <div class="profile-section-title">Lainnya</div>
+        <div class="profile-item"><div class="profile-item-icon pi-blue">❓</div><div class="profile-item-info"><div class="profile-item-name">Bantuan</div><div class="profile-item-sub">FAQ &amp; Hubungi kami</div></div><div class="profile-item-arrow">›</div></div>
+        <div class="profile-item"><div class="profile-item-icon pi-blue">ℹ️</div><div class="profile-item-info"><div class="profile-item-name">Tentang Mentai Yammy</div><div class="profile-item-sub">Versi 1.0.0</div></div><div class="profile-item-arrow">›</div></div>
+      </div>
+      <button class="btn-logout" id="logout-btn" onclick="doLogout()" style="display:none">🚪 Keluar dari Akun</button>
+      <div id="prof-login-btns" style="display:flex;gap:12px;margin-top:8px">
+        <button class="btn-primary"          style="flex:1;padding:14px" onclick="showScreen('login')">Masuk</button>
+        <button class="btn-primary btn-gold" style="flex:1;padding:14px" onclick="showScreen('register')">Daftar</button>
+      </div>
+    </div>
+    <nav class="bottom-nav">
+      <button class="bottom-nav-item"        onclick="switchTab('home',    this)"><span class="icon">🏠</span><span class="label">Beranda</span></button>
+      <button class="bottom-nav-item"        onclick="switchTab('cart',    this)"><span class="icon">🛒</span><span class="label">Keranjang</span></button>
+      <button class="bottom-nav-item active" onclick="switchTab('profile', this)"><span class="icon">👤</span><span class="label">Profil</span></button>
+    </nav>
+  </div>
+
+  <!-- ==================== PAYMENT MODAL ==================== -->
+  <div class="modal-overlay" id="payment-modal">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div id="modal-step-1">
+        <div class="modal-title">Pilih Pembayaran 💳</div>
+        <div class="ewallet-options">
+          <button class="ewallet-btn" onclick="selectWallet(this,'gopay')">  <div class="ew-icon">🟢</div><div class="ew-name">GoPay</div>    <div class="ew-color ew-gopay">Gojek</div></button>
+          <button class="ewallet-btn" onclick="selectWallet(this,'ovo')">    <div class="ew-icon">🟣</div><div class="ew-name">OVO</div>      <div class="ew-color ew-ovo">OVO</div></button>
+          <button class="ewallet-btn" onclick="selectWallet(this,'dana')">   <div class="ew-icon">🔵</div><div class="ew-name">DANA</div>     <div class="ew-color ew-dana">DANA</div></button>
+          <button class="ewallet-btn" onclick="selectWallet(this,'shopee')"> <div class="ew-icon">🟠</div><div class="ew-name">ShopeePay</div><div class="ew-color ew-shopee">Shopee</div></button>
+        </div>
+        <button class="btn-primary" id="btn-show-qr" onclick="showQR()" style="opacity:.5;pointer-events:none">Lanjut ke Pembayaran →</button>
+        <div class="modal-cancel"><button onclick="closeModal()">Batal</button></div>
+      </div>
+      <div id="modal-step-2" style="display:none">
+        <div class="modal-title">Scan &amp; Bayar 📱</div>
+        <div class="qr-section">
+          <div class="qr-box">📲</div>
+          <div class="qr-instruction">Scan QR ini menggunakan <strong id="wallet-name-show"></strong></div>
+          <div class="qr-amount" id="pay-amount-show"></div>
+          <div class="qr-timer">⏱️ Berlaku selama <span id="countdown">05:00</span></div>
+        </div>
+        <button class="btn-pay-confirm" onclick="confirmPayment()">✅ Konfirmasi Pembayaran Berhasil</button>
+        <div class="modal-cancel"><button onclick="backToWallet()">← Ganti metode</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SUCCESS MODAL ==================== -->
+  <div class="modal-overlay" id="success-modal">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="success-screen">
+        <div class="success-icon">🎉</div>
+        <div class="success-title">Pembayaran Berhasil!</div>
+        <div class="success-sub">Pesananmu sedang diproses.<br/>Dimsum segar akan segera siap!</div>
+        <div class="order-id"><div class="order-label">Nomor Pesanan</div><div class="order-value" id="order-id-show"></div></div>
+        <button class="btn-primary" onclick="closeSuccess()">Kembali ke Beranda</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    /* ============================================================
+       DATA — Menu & Constants
+       ============================================================ */
+    const MENU_DATA = [
+      { id:1, name:'Dimsum Ayam Jumbo',   emoji:'🥟', cat:'dimsum',  price:18000, desc:'Dimsum lembut berisi ayam cincang pilihan dengan bumbu rahasia.',       detail:'Dimsum lembut berisi ayam cincang pilihan dengan bumbu rahasia, dikukus sempurna hingga matang. Tekstur kulit tipis kenyal dengan isian yang padat dan gurih.',       rating:'4.9', cal:'210 kkal', portion:'4 pcs', popular:true },
+      { id:2, name:'Mentai Dimsum',        emoji:'🧀', cat:'mentai',  price:22000, desc:'Dimsum premium topping saus mentai dipanggang keemasan.',                detail:'Dimsum premium dengan topping saus mentai spesial yang dipanggang hingga berwarna keemasan. Perpaduan gurih saus mentai dengan dimsum yang lembut, dijamin ketagihan!', rating:'5.0', cal:'280 kkal', portion:'4 pcs', popular:true },
+      { id:3, name:'Wonton Kuah',          emoji:'🍜', cat:'wonton',  price:20000, desc:'Wonton lezat dalam kuah kaldu bening segar, disajikan hangat.',         detail:'Wonton lezat berisi udang dan ayam dalam kuah kaldu bening yang segar. Disajikan dengan daun bawang dan minyak wijen harum. Comfort food terbaik!',                   rating:'4.8', cal:'195 kkal', portion:'6 pcs', popular:false },
+      { id:4, name:'Dimsum Udang',         emoji:'🦐', cat:'dimsum',  price:20000, desc:'Dimsum segar berisi udang pilihan, kenyal dan gurih alami.',            detail:'Dimsum segar berisi udang segar pilihan yang kenyal dan gurih. Dibalut kulit dimsum tipis transparan khas resto premium. Best seller kami!',                          rating:'4.9', cal:'175 kkal', portion:'4 pcs', popular:true },
+      { id:5, name:'Mentai Wonton Goreng', emoji:'🔥', cat:'mentai',  price:25000, desc:'Wonton goreng crispy dengan topping saus mentai pedas manis.',          detail:'Wonton goreng crispy dengan topping saus mentai pedas manis yang menggoda. Tekstur luar renyah dalam lembut, disiram mentai sauce yang kaya rasa.',                   rating:'4.8', cal:'320 kkal', portion:'6 pcs', popular:false, isNew:true },
+      { id:6, name:'Hakao Udang',          emoji:'🩵', cat:'dimsum',  price:22000, desc:'Hakao klasik kulit transparan berisi udang segar pilihan.',             detail:'Hakao klasik berisi udang segar dengan kulit dimsum tipis semi-transparan. Dimasak dengan teknik kukus tradisional yang menjaga cita rasa asli seafood.',              rating:'4.7', cal:'160 kkal', portion:'4 pcs', popular:false },
+      { id:7, name:'Wonton Goreng',        emoji:'🥡', cat:'wonton',  price:18000, desc:'Wonton goreng crispy renyah isian ayam dan sayuran pilihan.',           detail:'Wonton goreng crispy renyah dengan isian ayam dan sayuran pilihan. Cocok jadi camilan atau pendamping makan. Tersedia saus sambal dan saus tiram.',                    rating:'4.8', cal:'240 kkal', portion:'8 pcs', popular:false },
+      { id:8, name:'Thai Tea Mentai',      emoji:'🧋', cat:'minuman', price:15000, desc:'Thai tea creamy dengan sentuhan saus mentai spesial yang unik.',        detail:'Thai tea creamy dengan sentuhan saus mentai spesial yang unik. Minuman signature Mentai Yammy yang bikin penasaran dan nagih!',                                        rating:'4.6', cal:'180 kkal', portion:'1 gelas', popular:false, isNew:true },
+    ];
+    const EWALLET_DATA = [
+      {id:'gopay',name:'GoPay'},{id:'ovo',name:'OVO'},{id:'dana',name:'DANA'},{id:'shopee',name:'ShopeePay'}
+    ];
+
+    /* ============================================================
+       APP — State & Logic
+       ============================================================ */
+    let currentUser=null, cart=[], currentItem=null, currentQty=1;
+    let selectedWallet=null, countdownTimer=null, activeMenuCat='semua', toastTimer=null;
+
+    /* Init */
+    setTimeout(()=>showScreen('home'), 2000);
+    renderMenu(MENU_DATA);
+
+    /* Navigation */
+    function showScreen(id) {
+      document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      if(id==='cart')    renderCart();
+      if(id==='profile') renderProfile();
+      window.scrollTo(0,0);
+    }
+    function switchTab(tab) {
+      if(tab==='cart' && !currentUser){ showToast('Login dulu untuk melihat keranjang! 🛒'); showScreen('login'); return; }
+      showScreen(tab);
+    }
+
+    /* Menu */
+    function renderMenu(items) {
+      const grid=document.getElementById('menu-grid');
+      if(!items.length){ grid.innerHTML='<p style="grid-column:1/-1;text-align:center;padding:30px;color:var(--gray)">Menu tidak ditemukan 😕</p>'; return; }
+      grid.innerHTML=items.map(m=>`
+        <div class="menu-card" onclick="openDetail(${m.id})">
+          ${m.popular?'<span class="badge-popular">🔥 Popular</span>':''}
+          ${m.isNew  ?'<span class="badge-new">✨ Baru</span>'      :''}
+          <div class="menu-emoji-img">${m.emoji}</div>
+          <div class="menu-info">
+            <div class="menu-name">${m.name}</div>
+            <div class="menu-desc">${m.desc}</div>
+            <div class="menu-price">Rp ${fmt(m.price)}</div>
+          </div>
+        </div>`).join('');
+    }
+    function filterCat(cat,btn){ activeMenuCat=cat; document.querySelectorAll('.cat-tab').forEach(t=>t.classList.remove('active')); btn.classList.add('active'); applyFilters(); }
+    function filterMenu(){ applyFilters(); }
+    function applyFilters(){
+      const q=(document.getElementById('search-input').value||'').toLowerCase();
+      let f=MENU_DATA;
+      if(activeMenuCat!=='semua') f=f.filter(m=>m.cat===activeMenuCat);
+      if(q) f=f.filter(m=>m.name.toLowerCase().includes(q)||m.desc.toLowerCase().includes(q));
+      renderMenu(f);
+    }
+
+    /* Detail */
+    function openDetail(id){
+      currentItem=MENU_DATA.find(m=>m.id===id); if(!currentItem) return;
+      currentQty=1;
+      document.getElementById('detail-emoji').textContent  =currentItem.emoji;
+      document.getElementById('detail-cat').textContent    =cap(currentItem.cat);
+      document.getElementById('detail-name').textContent   =currentItem.name;
+      document.getElementById('detail-price').textContent  ='Rp '+fmt(currentItem.price);
+      document.getElementById('detail-desc').textContent   =currentItem.detail;
+      document.getElementById('detail-rating').textContent =currentItem.rating;
+      document.getElementById('detail-cal').textContent    =currentItem.cal;
+      document.getElementById('detail-portion').textContent=currentItem.portion;
+      document.getElementById('detail-hot').style.display  =currentItem.popular?'inline-block':'none';
+      updateDetailTotal(); showScreen('detail');
+    }
+    function changeQty(d){ currentQty=Math.max(1,currentQty+d); document.getElementById('qty-display').textContent=currentQty; updateDetailTotal(); }
+    function updateDetailTotal(){ if(currentItem) document.getElementById('detail-total').textContent='Rp '+fmt(currentItem.price*currentQty); }
+    function addToCart(){
+      if(!currentUser){ showToast('Login dulu untuk memesan! 😊'); showScreen('login'); return; }
+      const ex=cart.find(c=>c.id===currentItem.id);
+      if(ex) ex.qty+=currentQty; else cart.push({...currentItem,qty:currentQty});
+      showToast(currentItem.emoji+' '+currentItem.name+' ditambahkan!'); showScreen('home');
+    }
+
+    /* Cart */
+    function renderCart(){
+      const body=document.getElementById('cart-body');
+      if(!currentUser){ body.innerHTML=`<div class="cart-empty"><div class="empty-icon">🔐</div><h3>Perlu Login</h3><p>Login dulu untuk melihat keranjang belanjamu</p><button class="btn-primary" style="margin-top:20px;padding:14px 28px;width:auto" onclick="showScreen('login')">Masuk Sekarang</button></div>`; return; }
+      if(!cart.length){ body.innerHTML=`<div class="cart-empty"><div class="empty-icon">🛒</div><h3>Keranjang Kosong</h3><p>Yuk pilih dimsum favoritmu dulu!</p><button class="btn-primary" style="margin-top:20px;padding:14px 28px;width:auto" onclick="showScreen('home')">Lihat Menu</button></div>`; return; }
+      const sub=cart.reduce((s,c)=>s+c.price*c.qty,0), ong=sub>=50000?0:8000, tot=sub+ong;
+      body.innerHTML=`
+        <div class="cart-items">
+          ${cart.map((item,i)=>`
+            <div class="cart-item">
+              <div class="cart-item-img">${item.emoji}</div>
+              <div class="cart-item-info">
+                <div class="cart-item-name">${item.name}</div>
+                <div class="cart-item-price">Rp ${fmt(item.price*item.qty)}</div>
+                <div class="cart-item-qty">
+                  <button class="cq-btn" onclick="updCart(${i},-1)">−</button>
+                  <span style="font-weight:700">${item.qty}</span>
+                  <button class="cq-btn" onclick="updCart(${i}, 1)">+</button>
+                </div>
+              </div>
+            </div>`).join('')}
+        </div>
+        <div class="cart-summary">
+          <div class="summary-row"><span>Subtotal</span><span>Rp ${fmt(sub)}</span></div>
+          <div class="summary-row"><span>Ongkos Kirim</span><span style="color:${ong===0?'#27ae60':'inherit'}">${ong===0?'🎉 Gratis':'Rp '+fmt(ong)}</span></div>
+          <div class="summary-row"><span>Total</span><span style="color:var(--orange)">Rp ${fmt(tot)}</span></div>
+        </div>
+        <button class="btn-checkout" onclick="openPayment()">💳 Bayar Sekarang · Rp ${fmt(tot)}</button>`;
+    }
+    function updCart(i,d){ cart[i].qty+=d; if(cart[i].qty<=0) cart.splice(i,1); renderCart(); }
+
+    /* Payment */
+    function openPayment(){
+      selectedWallet=null;
+      document.querySelectorAll('.ewallet-btn').forEach(b=>b.classList.remove('selected'));
+      setQRBtn(false);
+      document.getElementById('modal-step-1').style.display='block';
+      document.getElementById('modal-step-2').style.display='none';
+      document.getElementById('payment-modal').classList.add('active');
+    }
+    function selectWallet(btn,id){ document.querySelectorAll('.ewallet-btn').forEach(b=>b.classList.remove('selected')); btn.classList.add('selected'); selectedWallet=id; setQRBtn(true); }
+    function setQRBtn(on){ const b=document.getElementById('btn-show-qr'); b.style.opacity=on?'1':'.5'; b.style.pointerEvents=on?'auto':'none'; }
+    function showQR(){
+      if(!selectedWallet) return;
+      const name=EWALLET_DATA.find(w=>w.id===selectedWallet)?.name||'';
+      document.getElementById('wallet-name-show').textContent=name;
+      document.getElementById('pay-amount-show').textContent='Rp '+fmt(cartTotal());
+      document.getElementById('modal-step-1').style.display='none';
+      document.getElementById('modal-step-2').style.display='block';
+      startCountdown(300);
+    }
+    function backToWallet(){ clearCountdown(); document.getElementById('modal-step-1').style.display='block'; document.getElementById('modal-step-2').style.display='none'; }
+    function closeModal(){ clearCountdown(); document.getElementById('payment-modal').classList.remove('active'); }
+    function confirmPayment(){
+      clearCountdown();
+      document.getElementById('payment-modal').classList.remove('active');
+      document.getElementById('order-id-show').textContent='MY-'+Date.now().toString().slice(-8);
+      if(currentUser) currentUser.orders=(currentUser.orders||0)+1;
+      cart=[]; document.getElementById('success-modal').classList.add('active');
+    }
+    function closeSuccess(){ document.getElementById('success-modal').classList.remove('active'); showScreen('home'); }
+
+    /* Countdown */
+    function startCountdown(s){ clearCountdown(); let r=s; const el=document.getElementById('countdown'); countdownTimer=setInterval(()=>{ r--; el.textContent=pad(Math.floor(r/60))+':'+pad(r%60); if(r<=0)clearCountdown(); },1000); }
+    function clearCountdown(){ if(countdownTimer){clearInterval(countdownTimer);countdownTimer=null;} }
+
+    /* Auth */
+    function doLogin(){
+      const email=document.getElementById('login-email').value.trim()||'pengguna@email.com';
+      currentUser={name:cap(email.split('@')[0]),email,orders:3};
+      syncAuthUI(); showScreen('home'); showToast('Selamat datang, '+currentUser.name+'! 🎉');
+    }
+    function doRegister(){
+      const name=document.getElementById('reg-name').value.trim()||'Pelanggan Baru';
+      const email=document.getElementById('reg-email').value.trim()||'pengguna@email.com';
+      currentUser={name,email,orders:0};
+      syncAuthUI(); showScreen('home'); showToast('Akun berhasil dibuat, '+name+'! 🎉');
+    }
+    function doLogout(){ currentUser=null; cart=[]; syncAuthUI(); showScreen('home'); showToast('Berhasil keluar! 👋'); }
+    function syncAuthUI(){
+      document.getElementById('nav-auth-btns').style.display=currentUser?'none':'flex';
+      document.getElementById('nav-user-btns').style.display=currentUser?'flex':'none';
+    }
+
+    /* Profile */
+    function renderProfile(){
+      const ok=!!currentUser;
+      document.getElementById('prof-name').textContent   =ok?currentUser.name:'Halo, Tamu!';
+      document.getElementById('prof-email').textContent  =ok?currentUser.email:'Login untuk fitur lengkap';
+      document.getElementById('prof-avatar').textContent =ok?currentUser.name.charAt(0).toUpperCase():'👤';
+      document.getElementById('prof-orders').textContent =ok?(currentUser.orders||0):'—';
+      document.getElementById('logout-btn').style.display    =ok?'block':'none';
+      document.getElementById('prof-login-btns').style.display=ok?'none':'flex';
+    }
+    function checkLogin(){ if(!currentUser){showToast('Login dulu ya! 😊');showScreen('login');}else showToast('Fitur segera hadir! 🚀'); }
+
+    /* Toast */
+    function showToast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); if(toastTimer)clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove('show'),2500); }
+
+    /* Helpers */
+    function fmt(n){ return n.toLocaleString('id-ID'); }
+    function cap(s){ return s?s.charAt(0).toUpperCase()+s.slice(1):''; }
+    function pad(n){ return String(n).padStart(2,'0'); }
+    function cartTotal(){ const s=cart.reduce((a,c)=>a+c.price*c.qty,0); return s+(s>=50000?0:8000); }
+  </script>
+</body>
+</html>
