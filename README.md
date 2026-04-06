@@ -25,3 +25,4 @@ Dioptimalkan untuk tampilan mobile (360px – 480px) dan desktop.
 📍 Kota Solo, Jawa Tengah  
 📱 WhatsApp: 082227436527 
 📸 Instagram: @mentaiyammy
+**Mentai Yammy** 
