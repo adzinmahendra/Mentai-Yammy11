@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Mentai Yammy – Dimsum, Mentai & Wonton terbaik di Kota Solo" />
+  <title>Mentai Yammy 🍱</title>
+
+  <!-- Google Fonts -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/screens.css" />
+</head>
+<body>
+
+  <!-- ==================== SPLASH ==================== -->
+  <div class="screen active" id="splash">
+    <div class="splash-content">
+      <div class="splash-logo">🍱</div>
+      <div class="splash-title">Mentai<br />Yammy</div>
+      <div class="splash-sub">Dimsum · Mentai · Wonton</div>
+      <div class="splash-dots">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== HOME ==================== -->
+  <div class="screen" id="home">
+
+    <!-- Navbar -->
+    <nav class="navbar">
+      <div class="nav-brand">
+        <span class="nav-logo">🍱</span>
+        <span class="nav-title">Mentai Yammy</span>
+      </div>
+      <div class="nav-actions" id="nav-auth-btns">
+        <button class="nav-btn nav-btn-outline" onclick="showScreen('login')">Masuk</button>
+        <button class="nav-btn nav-btn-fill"    onclick="showScreen('register')">Daftar</button>
+      </div>
+      <div class="nav-actions" id="nav-user-btns" style="display:none">
+        <button class="nav-icon-btn" onclick="showScreen('cart')" title="Keranjang">🛒</button>
+      </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-greeting">Halo, Selamat Datang! 👋</div>
+      <div class="hero-title">Dimsum Mentai<br />Terbaik Kota Solo</div>
+      <div class="hero-search">
+        <span>🔍</span>
+        <input
+          type="text"
+          id="search-input"
+          placeholder="Cari dimsum, wonton, mentai..."
+          oninput="filterMenu()"
+        />
+      </div>
+    </section>
+
+    <!-- Promo Banner -->
+    <div class="promo-banner">
+      <div class="promo-text">
+        <h3>Promo Hari Ini!</h3>
+        <p>Gratis ongkir min. order Rp 50.000</p>
+      </div>
+      <div class="promo-emoji">🎉</div>
+    </div>
+
+    <!-- Category Tabs -->
+    <div class="section-header">
+      <div class="section-title">Kategori Menu</div>
+    </div>
+    <div class="categories">
+      <button class="cat-tab active"  onclick="filterCat('semua',   this)">Semua</button>
+      <button class="cat-tab"         onclick="filterCat('dimsum',  this)">🥟 Dimsum</button>
+      <button class="cat-tab"         onclick="filterCat('mentai',  this)">🧀 Mentai</button>
+      <button class="cat-tab"         onclick="filterCat('wonton',  this)">🍜 Wonton</button>
+      <button class="cat-tab"         onclick="filterCat('minuman', this)">🧋 Minuman</button>
+    </div>
+
+    <!-- Menu Grid -->
+    <div class="section-header">
+      <div class="section-title">Menu Populer</div>
+      <button class="see-all">Lihat Semua</button>
+    </div>
+    <div class="menu-grid" id="menu-grid"></div>
+
+    <div style="height:20px"></div>
+
+    <!-- Bottom Nav -->
+    <nav class="bottom-nav">
+      <button class="bottom-nav-item active" onclick="switchTab('home',   this)">
+        <span class="icon">🏠</span><span class="label">Beranda</span>
+      </button>
+      <button class="bottom-nav-item"        onclick="switchTab('cart',    this)">
+        <span class="icon">🛒</span><span class="label">Keranjang</span>
+      </button>
+      <button class="bottom-nav-item"        onclick="switchTab('profile', this)">
+        <span class="icon">👤</span><span class="label">Profil</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- ==================== LOGIN ==================== -->
+  <div class="screen auth-screen" id="login">
+    <div class="auth-logo">🍱</div>
+    <div class="auth-brand">Mentai Yammy</div>
+    <div class="auth-tagline">Masuk dan nikmati kelezatan dimsum terbaik</div>
+
+    <div class="auth-card">
+      <h2>Selamat Datang!</h2>
+      <p>Masuk ke akunmu untuk memesan</p>
+
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input class="form-input" type="email" id="login-email" placeholder="nama@email.com" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input class="form-input" type="password" id="login-pass" placeholder="••••••••" />
+      </div>
+
+      <button class="btn-primary" onclick="doLogin()">Masuk Sekarang</button>
+
+      <div class="divider"><span>atau</span></div>
+
+      <button
+        class="btn-primary btn-google"
+        onclick="doLogin()"
+      >🔵 Masuk dengan Google</button>
+
+      <div class="auth-switch">
+        Belum punya akun? <a onclick="showScreen('register')">Daftar disini</a>
+      </div>
+      <div class="auth-switch" style="margin-top:10px">
+        <a onclick="showScreen('home')">← Kembali ke Beranda</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== REGISTER ==================== -->
+  <div class="screen auth-screen" id="register">
+    <div class="auth-logo">🍱</div>
+    <div class="auth-brand">Mentai Yammy</div>
+    <div class="auth-tagline">Bergabung dan dapatkan promo spesial!</div>
+
+    <div class="auth-card">
+      <h2>Buat Akun Baru</h2>
+      <p>Daftar gratis dan mulai memesan</p>
+
+      <div class="form-group">
+        <label class="form-label">Nama Lengkap</label>
+        <input class="form-input" type="text"  id="reg-name"  placeholder="Nama kamu" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Nomor HP</label>
+        <input class="form-input" type="tel"   id="reg-phone" placeholder="08xxxxxxxxxx" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input class="form-input" type="email" id="reg-email" placeholder="nama@email.com" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input class="form-input" type="password" id="reg-pass" placeholder="Min. 8 karakter" />
+      </div>
+
+      <button class="btn-primary" onclick="doRegister()">Daftar Sekarang</button>
+
+      <div class="auth-switch">
+        Sudah punya akun? <a onclick="showScreen('login')">Masuk disini</a>
+      </div>
+      <div class="auth-switch" style="margin-top:10px">
+        <a onclick="showScreen('home')">← Kembali ke Beranda</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== DETAIL ==================== -->
+  <div class="screen" id="detail">
+    <div class="detail-img" id="detail-img">
+      <button class="back-btn" onclick="showScreen('home')">←</button>
+      <span id="detail-emoji"></span>
+    </div>
+    <div class="detail-content">
+      <div class="detail-badges">
+        <span class="detail-badge badge-cat" id="detail-cat"></span>
+        <span class="detail-badge badge-hot" id="detail-hot" style="display:none">🔥 Terlaris</span>
+      </div>
+      <div class="detail-name"  id="detail-name"></div>
+      <div class="detail-price" id="detail-price"></div>
+      <div class="detail-desc"  id="detail-desc"></div>
+
+      <div class="detail-section-title">Info Produk</div>
+      <div class="info-grid">
+        <div class="info-item">
+          <div class="info-icon">⏱️</div>
+          <div class="info-val">15 mnt</div>
+          <div class="info-lbl">Estimasi</div>
+        </div>
+        <div class="info-item">
+          <div class="info-icon">⭐</div>
+          <div class="info-val" id="detail-rating"></div>
+          <div class="info-lbl">Rating</div>
+        </div>
+        <div class="info-item">
+          <div class="info-icon">🔥</div>
+          <div class="info-val" id="detail-cal"></div>
+          <div class="info-lbl">Kalori</div>
+        </div>
+        <div class="info-item">
+          <div class="info-icon">📦</div>
+          <div class="info-val" id="detail-portion"></div>
+          <div class="info-lbl">Porsi</div>
+        </div>
+      </div>
+
+      <div class="detail-section-title">Jumlah</div>
+      <div class="qty-control">
+        <button class="qty-btn" onclick="changeQty(-1)">−</button>
+        <span class="qty-val" id="qty-display">1</span>
+        <button class="qty-btn" onclick="changeQty(1)">+</button>
+      </div>
+
+      <button class="btn-add-cart" onclick="addToCart()">
+        🛒 Tambah ke Keranjang — <span id="detail-total"></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ==================== CART ==================== -->
+  <div class="screen" id="cart">
+    <div class="navbar">
+      <div class="nav-brand">
+        <span style="font-size:20px;cursor:pointer" onclick="showScreen('home')">←</span>
+        <span class="nav-title">Keranjang</span>
+      </div>
+    </div>
+    <div id="cart-body"></div>
+
+    <nav class="bottom-nav">
+      <button class="bottom-nav-item"        onclick="switchTab('home',    this)">
+        <span class="icon">🏠</span><span class="label">Beranda</span>
+      </button>
+      <button class="bottom-nav-item active" onclick="switchTab('cart',    this)">
+        <span class="icon">🛒</span><span class="label">Keranjang</span>
+      </button>
+      <button class="bottom-nav-item"        onclick="switchTab('profile', this)">
+        <span class="icon">👤</span><span class="label">Profil</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- ==================== PROFILE ==================== -->
+  <div class="screen" id="profile">
+    <div class="profile-header">
+      <div class="profile-avatar-wrap">
+        <div class="profile-avatar" id="prof-avatar">👤</div>
+        <div>
+          <div class="profile-name"  id="prof-name">Tamu</div>
+          <div class="profile-email" id="prof-email">Belum login</div>
+        </div>
+      </div>
+    </div>
+    <div class="profile-content">
+      <div class="profile-stats">
+        <div class="stat-card">
+          <div class="stat-num" id="prof-orders">0</div>
+          <div class="stat-lbl">Pesanan</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">⭐4.9</div>
+          <div class="stat-lbl">Rating</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">🏅</div>
+          <div class="stat-lbl">Member</div>
+        </div>
+      </div>
+
+      <!-- Akun Section -->
+      <div class="profile-section">
+        <div class="profile-section-title">Akun</div>
+        <div class="profile-item">
+          <div class="profile-item-icon pi-orange">👤</div>
+          <div class="profile-item-info">
+            <div class="profile-item-name">Edit Profil</div>
+            <div class="profile-item-sub">Ubah nama, foto, nomor HP</div>
+          </div>
+          <div class="profile-item-arrow">›</div>
+        </div>
+        <div class="profile-item">
+          <div class="profile-item-icon pi-blue">📍</div>
+          <div class="profile-item-info">
+            <div class="profile-item-name">Alamat Saya</div>
+            <div class="profile-item-sub">Kelola alamat pengiriman</div>
+          </div>
+          <div class="profile-item-arrow">›</div>
+        </div>
+      </div>
+
+      <!-- Pesanan Section -->
+      <div class="profile-section">
+        <div class="profile-section-title">Pesanan</div>
+        <div class="profile-item" onclick="checkLogin()">
+          <div class="profile-item-icon pi-orange">📋</div>
+          <div class="profile-item-info">
+            <div class="profile-item-name">Riwayat Pesanan</div>
+            <div class="profile-item-sub">Lihat semua pesananmu</div>
+          </div>
+          <div class="profile-item-arrow">›</div>
+        </div>
+        <div class="profile-item">
+          <div class="profile-item-icon pi-green">💳</div>
+          <div class="profile-item-info">
+            <div class="profile-item-name">Metode Pembayaran</div>
+            <div class="profile-item-sub">GoPay, OVO, DANA, dll</div>
+          </div>
+          <div class="profile-item-arrow">›</div>
+        </div>
+      </div>
+
+      <!-- Lainnya Section -->
+      <div class="profile-section">
+        <div class="profile-section-title">Lainnya</div>
+        <div class="profile-item">
+          <div class="profile-item-icon pi-blue">❓</div>
+          <div class="profile-item-info">
+            <div class="profile-item-name">Bantuan</div>
+            <div class="profile-item-sub">FAQ & Hubungi kami</div>
+          </div>
+          <div class="profile-item-arrow">›</div>
+        </div>
+        <div class="profile-item">
+          <div class="profile-item-icon pi-blue">ℹ️</div>
+          <div class="profile-item-info">
+            <div class="profile-item-name">Tentang Mentai Yammy</div>
+            <div class="profile-item-sub">Versi 1.0.0</div>
+          </div>
+          <div class="profile-item-arrow">›</div>
+        </div>
+      </div>
+
+      <button class="btn-logout" id="logout-btn" onclick="doLogout()" style="display:none">
+        🚪 Keluar dari Akun
+      </button>
+      <div id="prof-login-btns" style="display:flex;gap:12px;margin-top:8px">
+        <button class="btn-primary" style="flex:1;padding:14px" onclick="showScreen('login')">Masuk</button>
+        <button class="btn-primary btn-gold"  style="flex:1;padding:14px" onclick="showScreen('register')">Daftar</button>
+      </div>
+    </div>
+
+    <nav class="bottom-nav">
+      <button class="bottom-nav-item"        onclick="switchTab('home',    this)">
+        <span class="icon">🏠</span><span class="label">Beranda</span>
+      </button>
+      <button class="bottom-nav-item"        onclick="switchTab('cart',    this)">
+        <span class="icon">🛒</span><span class="label">Keranjang</span>
+      </button>
+      <button class="bottom-nav-item active" onclick="switchTab('profile', this)">
+        <span class="icon">👤</span><span class="label">Profil</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- ==================== PAYMENT MODAL ==================== -->
+  <div class="modal-overlay" id="payment-modal">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+
+      <!-- Step 1: Choose Wallet -->
+      <div id="modal-step-1">
+        <div class="modal-title">Pilih Pembayaran 💳</div>
+        <div class="ewallet-options">
+          <button class="ewallet-btn" onclick="selectWallet(this,'gopay')">
+            <div class="ew-icon">🟢</div>
+            <div class="ew-name">GoPay</div>
+            <div class="ew-color ew-gopay">Gojek</div>
+          </button>
+          <button class="ewallet-btn" onclick="selectWallet(this,'ovo')">
+            <div class="ew-icon">🟣</div>
+            <div class="ew-name">OVO</div>
+            <div class="ew-color ew-ovo">OVO</div>
+          </button>
+          <button class="ewallet-btn" onclick="selectWallet(this,'dana')">
+            <div class="ew-icon">🔵</div>
+            <div class="ew-name">DANA</div>
+            <div class="ew-color ew-dana">DANA</div>
+          </button>
+          <button class="ewallet-btn" onclick="selectWallet(this,'shopee')">
+            <div class="ew-icon">🟠</div>
+            <div class="ew-name">ShopeePay</div>
+            <div class="ew-color ew-shopee">Shopee</div>
+          </button>
+        </div>
+        <button
+          class="btn-primary"
+          id="btn-show-qr"
+          onclick="showQR()"
+          style="opacity:0.5;pointer-events:none"
+        >Lanjut ke Pembayaran →</button>
+        <div class="modal-cancel">
+          <button onclick="closeModal()">Batal</button>
+        </div>
+      </div>
+
+      <!-- Step 2: QR Code -->
+      <div id="modal-step-2" style="display:none">
+        <div class="modal-title">Scan & Bayar 📱</div>
+        <div class="qr-section">
+          <div class="qr-box">📲</div>
+          <div class="qr-instruction">
+            Scan QR ini menggunakan aplikasi
+            <strong id="wallet-name-show"></strong>
+          </div>
+          <div class="qr-amount"  id="pay-amount-show"></div>
+          <div class="qr-timer">⏱️ Berlaku selama <span id="countdown">05:00</span></div>
+        </div>
+        <button class="btn-pay-confirm" onclick="confirmPayment()">
+          ✅ Konfirmasi Pembayaran Berhasil
+        </button>
+        <div class="modal-cancel">
+          <button onclick="backToWallet()">← Ganti metode</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SUCCESS MODAL ==================== -->
+  <div class="modal-overlay" id="success-modal">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="success-screen">
+        <div class="success-icon">🎉</div>
+        <div class="success-title">Pembayaran Berhasil!</div>
+        <div class="success-sub">
+          Pesananmu sedang diproses.<br />Dimsum segar akan segera siap!
+        </div>
+        <div class="order-id">
+          <div class="order-label">Nomor Pesanan</div>
+          <div class="order-value" id="order-id-show"></div>
+        </div>
+        <button class="btn-primary" onclick="closeSuccess()">Kembali ke Beranda</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast"></div>
+
+  <!-- Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
